@@ -1,7 +1,7 @@
 //v.3.0 build 110707
 
 /*
-Copyright Dinamenta, UAB http://www.dhtmlx.com
+Copyright DHTMLX LTD. http://www.dhtmlx.com
 You allowed to use this component or parts of it under GPL terms
 To use it on other terms or get Professional edition of the component please contact us at sales@dhtmlx.com
 */
@@ -60,7 +60,7 @@ dhtmlXCombo.prototype.dhx_Event=function(){this.dhx_SeverCatcherPath="";this.att
 //v.3.0 build 110707
 
 /*
-Copyright Dinamenta, UAB http://www.dhtmlx.com
+Copyright DHTMLX LTD. http://www.dhtmlx.com
 You allowed to use this component or parts of it under GPL terms
 To use it on other terms or get Professional edition of the component please contact us at sales@dhtmlx.com
 */

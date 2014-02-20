@@ -252,6 +252,7 @@ to use it in non-GPL project. Please contact sales@dhtmlx.com for details
 				if (e_type === 'dhx_tooltip_line') continue;
 
 				var dets = scheduler.getEvent(evs[i].getAttribute("event_id"));
+                if (!dets) continue;
 				var day = dets._sday;
 				var week = dets._sweek;
 				var length = dets._length || 0;

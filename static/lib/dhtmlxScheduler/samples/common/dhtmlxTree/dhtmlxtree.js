@@ -5204,4 +5204,4 @@ dhtmlXTreeObject.prototype._dp_init=function(dp){
 };
 
 
-//(c)Dinamenta, UAB www.dhtmlx.com
+//(c)dhtmlx ltd. www.dhtmlx.com

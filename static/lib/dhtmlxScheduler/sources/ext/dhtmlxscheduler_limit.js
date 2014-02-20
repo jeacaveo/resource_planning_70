@@ -279,18 +279,18 @@ scheduler.config.display_marked_timespans = true;
 	});
 
 	scheduler.attachEvent("onViewChange", function(){
-		scheduler.mark_now();
+		scheduler._mark_now();
 	});
 	scheduler.attachEvent("onSchedulerResize", function(){
-		window.setTimeout(function(){ scheduler.mark_now(); }, 1);
+		window.setTimeout(function(){ scheduler._mark_now(); }, 1);
 		return true;
 	});
 	scheduler.attachEvent("onTemplatesReady", function() {
-		scheduler.mark_now_timer = window.setInterval(function() {
-			scheduler.mark_now();
+		scheduler._mark_now_timer = window.setInterval(function() {
+			scheduler._mark_now();
 		}, 60000);
 	});
-	scheduler.mark_now = function(hide) {
+	scheduler._mark_now = function(hide) {
 		// day, week, units views
 		var dhx_now_time = 'dhx_now_time';
 		if (!this._els[dhx_now_time]) {
@@ -299,7 +299,7 @@ scheduler.config.display_marked_timespans = true;
 		var now = scheduler._currentDate();
 		var cfg = this.config;
 		scheduler._remove_mark_now(); // delete previous marks if they exist
-		if (!hide && cfg._mark_now && now < this._max_date && now > this._min_date && now.getHours() >= cfg.first_hour && now.getHours()<cfg.last_hour) {
+		if (!hide && cfg.mark_now && now < this._max_date && now > this._min_date && now.getHours() >= cfg.first_hour && now.getHours()<cfg.last_hour) {
 			var day_index = this.locate_holder_day(now);
 			this._els[dhx_now_time] = scheduler._append_mark_now(day_index, now);
 		}

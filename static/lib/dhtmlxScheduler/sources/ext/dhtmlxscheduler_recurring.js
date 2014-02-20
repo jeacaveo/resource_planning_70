@@ -326,6 +326,7 @@ scheduler._rec_temp = [];
 			if (ev.rec_type)
 				ev.rec_pattern = ev.rec_type.split("#")[0];
 		}
+		return ev_id;
 	};
 })();
 scheduler.attachEvent("onEventIdChange", function(id, new_id) {
@@ -342,7 +343,7 @@ scheduler.attachEvent("onEventIdChange", function(id, new_id) {
 
 	delete this._ignore_call;
 });
-scheduler.attachEvent("onBeforeEventDelete", function(id) {
+scheduler.attachEvent("onConfirmedBeforeEventDelete", function(id) {
 	var ev = this.getEvent(id);
 	if (id.toString().indexOf("#") != -1 || (ev.event_pid && ev.event_pid != "0" && ev.rec_type && ev.rec_type != 'none')) {
 		id = id.split("#");
@@ -377,6 +378,7 @@ scheduler.attachEvent("onEventChanged", function(id) {
 	if (this._loading) return true;
 
 	var ev = this.getEvent(id);
+
 	if (id.toString().indexOf("#") != -1) {
 		var id = id.split("#");
 		var nid = this.uid();
@@ -541,6 +543,11 @@ scheduler.get_visible_events = function(only_timed) {
 	var old_update_event = scheduler.updateEvent;
 	scheduler.updateEvent = function(id) {
 		var ev = scheduler.getEvent(id);
+		if(ev.rec_type){
+			//rec_type can be changed without the lightbox,
+			// make sure rec_pattern updated as well
+			ev.rec_pattern = (ev.rec_type || "").split("#")[0];
+		}
 		if (ev && ev.rec_type && id.toString().indexOf('#') === -1) {
 			scheduler.update_view();
 		} else {

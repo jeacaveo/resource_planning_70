@@ -1781,7 +1781,7 @@ dataProcessor.prototype={
 
 };
 
-//(c)Dinamenta, UAB www.dhtmlx.com
+//(c)dhtmlx ltd. www.dhtmlx.com
 /*
 	dhx_sort[index]=direction
 	dhx_filter[index]=mask
@@ -1918,7 +1918,7 @@ dhtmlxError.catchError("LoadXML",function(a,b,c){
     }
 });
 
-window.dhtmlXScheduler = window.scheduler = { version: "4.0" };
+window.dhtmlXScheduler = window.scheduler = { version: "4.0.1" };
 dhtmlxEventable(scheduler);
 
 scheduler.init=function(id,date,mode){
@@ -1940,16 +1940,36 @@ scheduler.init=function(id,date,mode){
 	this.get_elements();
 	this.init_templates();
 	this.set_actions();
-	dhtmlxEvent(window,"resize",function(){
-		window.clearTimeout(scheduler._resize_timer);
-		scheduler._resize_timer=window.setTimeout(function(){
-			if (scheduler.callEvent("onSchedulerResize",[]))  {
-				scheduler.update_view();
-				scheduler.callEvent("onAfterSchedulerResize", []);
-			}
-		}, 100);
-	});
 
+	(function(){
+		var oldSize = getWindowSize();
+		dhtmlxEvent(window,"resize",function(){
+			var newSize = getWindowSize();
+
+			// ie7-8 triggers "resize" when window's elements are resized, it messes container-autoresize extension
+			// check if it's actually resized
+			if(!equals(oldSize, newSize)){
+				window.clearTimeout(scheduler._resize_timer);
+				scheduler._resize_timer=window.setTimeout(function(){
+					if (scheduler.callEvent("onSchedulerResize",[]))  {
+						scheduler.update_view();
+						scheduler.callEvent("onAfterSchedulerResize", []);
+					}
+				}, 100);
+			}
+			oldSize = newSize;
+
+		});
+		function getWindowSize(){
+			return {
+				w : window.innerWidth || document.documentElement.clientWidth,
+				h : window.innerHeight || document.documentElement.clientHeight
+			};
+		}
+		function equals(a,b){
+			return a.w == b.w && a.h == b.h;
+		}
+	})();
 	this._init_touch_events();
 	this.set_sizes();
 	scheduler.callEvent('onSchedulerReady', []);
@@ -2306,11 +2326,12 @@ scheduler._on_mouse_move=function(e){
 				
 				start = this._get_date_from_pos(pos).valueOf();
 
-				var res = this.callEvent("onBeforeEventCreated", [e]);
-				if (!res)
-					return;
-
 				if (!this._drag_start) {
+					var res = this.callEvent("onBeforeEventCreated", [e, this._drag_id]);
+					if (!res)
+						return;
+
+
 					this._drag_start=start;
 					return;
 				}
@@ -2471,7 +2492,7 @@ scheduler._on_mouse_up=function(e){
 		var ev=this.getEvent(this._drag_id);
 		if (this._drag_event._dhx_changed || !this._drag_event.start_date || ev.start_date.valueOf()!=this._drag_event.start_date.valueOf() || ev.end_date.valueOf()!=this._drag_event.end_date.valueOf()){
 			var is_new=(this._drag_mode=="new-size");
-			if (!this.callEvent("onBeforeEventChanged",[ev, e, is_new])){
+			if (!this.callEvent("onBeforeEventChanged",[ev, e, is_new, this._drag_event])){
 				if (is_new) 
 					this.deleteEvent(ev.id, true);
 				else {
@@ -2508,6 +2529,12 @@ scheduler.update_view=function(){
 	if (this._load_mode && this._load()) return this._render_wait = true;
 	this.render_view_data();
 };
+
+scheduler.isViewExists = function(mode){
+	return !!(scheduler[mode+ "_view"] ||
+		(scheduler.date[mode+ "_start"] && scheduler.templates[mode+ "_date"] && scheduler.templates[mode+ "_scale_date"]));
+};
+
 scheduler.updateView = function(date, mode) {
 	date = date || this._date;
 	mode = mode || this._mode;
@@ -5393,11 +5420,12 @@ scheduler._dp_init=function(dp){
 	dp._methods=["_set_event_text_style","","changeEventId","deleteEvent"];
 	
 	this.attachEvent("onEventAdded",function(id){
-		if (!this._loading)
+		if (!this._loading && this._validId(id))
 			dp.setUpdated(id,true,"inserted");
 	});
 	this.attachEvent("onConfirmedBeforeEventDelete", function(id){
-        var z=dp.getState(id);
+		if (!this._validId(id)) return;
+		var z=dp.getState(id);
         
 		if (z=="inserted" || this._new_event) {  dp.setUpdated(id,false);		return true; }
 		if (z=="deleted")  return false;
@@ -5407,7 +5435,7 @@ scheduler._dp_init=function(dp){
       	return false;
 	});
 	this.attachEvent("onEventChanged",function(id){
-		if (!this._loading)
+		if (!this._loading && this._validId(id))
 			dp.setUpdated(id,true,"updated");
 	});
 	
@@ -5436,6 +5464,9 @@ scheduler._dp_init=function(dp){
 		
 };
 
+scheduler._validId=function(id){
+	return true;
+};
 
 scheduler.setUserData=function(id,name,value){
 	if (id)

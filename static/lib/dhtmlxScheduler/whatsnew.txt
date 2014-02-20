@@ -1,3 +1,6 @@
+4.0.1
+	Minor regression, which was introduced in 4.0, are fixed
+
 4.0
 	Flexible time scales - some days, hours can be removed from time scale
 	Ability to show "more events" links in month view

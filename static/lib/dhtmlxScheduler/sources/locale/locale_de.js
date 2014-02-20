@@ -12,7 +12,7 @@ scheduler.locale = {
 		month_tab: "Monat",
 		new_event: "neuer Eintrag",
 		icon_save: "Speichern",
-		icon_cancel: "Annulieren",
+		icon_cancel: "Abbrechen",
 		icon_details: "Details",
 		icon_edit: "Ändern",
 		icon_delete: "Löschen",

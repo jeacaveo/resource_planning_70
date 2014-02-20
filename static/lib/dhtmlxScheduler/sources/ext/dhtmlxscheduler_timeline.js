@@ -100,17 +100,20 @@ scheduler.createTimelineView=function(obj){
 
 	scheduler.date["add_" + obj.name] = function(date, step, c) {
 		var resulting_date = scheduler.date.add(date, (obj.x_length || obj.x_size) * step * obj.x_step, obj.x_unit);
-		if ( (obj.x_unit == "minute" || obj.x_unit == "hour") && !obj.x_length ) {
+		if (obj.x_unit == "minute" || obj.x_unit == "hour") {
+			var size = (obj.x_length || obj.x_size);
 			if ( +scheduler.date.date_part(new Date(date)) == +scheduler.date.date_part(new Date(resulting_date )) ) {
-				obj.x_start += step*obj.x_size;
+				obj.x_start += step*size;
 			} else {
 				var converted_step = (obj.x_unit == "hour") ? obj.x_step*60 : obj.x_step;
 				// total steps starting from 0
-				var total_steps = ( (24 * 60) / (obj.x_size * converted_step) ) - 1;
+				var total_steps = ( (24 * 60) / (size * converted_step) ) - 1;
+				var steps_offset = Math.round(total_steps * size);
+
 				if (step > 0) {
-					obj.x_start = obj.x_start - (total_steps * obj.x_size);
+					obj.x_start = obj.x_start - steps_offset;
 				} else {
-					obj.x_start = (total_steps * obj.x_size) + obj.x_start;
+					obj.x_start = steps_offset + obj.x_start;
 				}
 			}
 		}
