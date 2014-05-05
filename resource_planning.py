@@ -252,14 +252,14 @@ class resource_planning(object):
  
     def write(self, cr, uid, ids, vals, context=None):
         result = super(resource_planning, self).write(cr, uid, ids, vals, context)
-        for this in self.browse(
-                cr, uid, ids if isinstance(ids, list) else [ids], context):
-            this._assert_availability()
+        #for this in self.browse(
+        #        cr, uid, ids if isinstance(ids, list) else [ids], context):
+        #    this._assert_availability()
         return result
 
     def create(self, cr, uid, vals, context=None):
         id = super(resource_planning, self).create(cr, uid, vals, context)
-        self.browse(cr, uid, id, context)._assert_availability()
+        # self.browse(cr, uid, id, context)._assert_availability()
         return id
 
     def fields_view_get(self, cr, uid, view_id=None, view_type='form',
