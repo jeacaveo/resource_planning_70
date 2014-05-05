@@ -142,12 +142,13 @@ class resource_planning(object):
                                 field),
                             this._get_sql_parameter_dict())
                     if cr.fetchall()[0][0] >= this[field].time_efficiency:
-                        if raise_except_orm:
-                            raise except_orm(_('Error'), _('%s can only be '
-                                'booked %d time(s) in the same period!') % (
-                                    this[field].name,
-                                    this[field].time_efficiency))
-                        return False
+                        #if raise_except_orm:
+                        #    raise except_orm(_('Error'), _('%s can only be '
+                        #        'booked %d time(s) in the same period!') % (
+                        #            this[field].name,
+                        #            this[field].time_efficiency))
+                        #return False
+                        return True
 
             for field in self._resource_fields:
                 if not this[field].calendar_id:
